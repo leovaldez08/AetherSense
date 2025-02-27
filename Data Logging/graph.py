@@ -1,16 +1,33 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
-try:
-    data = pd.read_csv('sensor_data.csv')
-except FileNotFoundError:
-    print("Error: 'sensor_data.csv' not found. Please ensure the data logging script has been run.")
+# Define the path to the Data Logging folder
+data_folder = "Data Logging"
+csv_file_path = os.path.join(data_folder, "sensor_data.csv")
+
+# Check if the CSV file exists
+if not os.path.exists(csv_file_path):
+    print(f"Error: '{csv_file_path}' not found. Please ensure the data logging script has been run.")
     exit(1)
 
-data['Timestamp'] = pd.to_numeric(data['Timestamp'], errors='coerce')
-data.dropna(subset=['Timestamp'], inplace=True)
-data['Timestamp'] = data['Timestamp'] / 1000  
+# Read the CSV file
+try:
+    data = pd.read_csv(csv_file_path)
+    
+    # Convert the 'Timestamp' column to numeric
+    data['Timestamp'] = pd.to_numeric(data['Timestamp'], errors='coerce')
+    
+    # Drop rows with invalid timestamps (if any)
+    data.dropna(subset=['Timestamp'], inplace=True)
+    
+    # Convert timestamp to seconds
+    data['Timestamp'] = data['Timestamp'] / 1000  # Convert milliseconds to seconds
+except Exception as e:
+    print(f"Error reading or processing the CSV file: {e}")
+    exit(1)
 
+# Plot the data
 plt.figure(figsize=(12, 8))
 
 # Temperature
@@ -33,17 +50,18 @@ plt.grid(True)
 plt.subplot(2, 2, 3)  
 plt.plot(data['Timestamp'], data['Air Quality (PPM)'], label='Air Quality (PPM)', color='orange')
 plt.xlabel('Time (s)')
-plt.ylabel('Impurity Level (PPM)')
-plt.title('Impure Substances level (PPM) Over Time')
+plt.ylabel('Air Quality (PPM)')
+plt.title('Air Quality (PPM) Over Time')
 plt.grid(True)
 
-# AQI
+# AQI Value
 plt.subplot(2, 2, 4)  
 plt.plot(data['Timestamp'], data['AQI'], label='AQI', color='red')
 plt.xlabel('Time (s)')
-plt.ylabel('AQ ')
-plt.title('AQI Value Over Time')
+plt.ylabel('AQI')
+plt.title('AQI Over Time')
 plt.grid(True)
 
+# Display the Graph
 plt.tight_layout()
 plt.show()

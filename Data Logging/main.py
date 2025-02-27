@@ -1,37 +1,40 @@
 import serial
 import time
 import csv
+import os
 
-def initialize_serial(port, baudrate):
-    try:
-        ser = serial.Serial(port, baudrate)
-        print(f"Connected to {port} at {baudrate} baud.")
-        return ser
-    except serial.SerialException as e:
-        print(f"Failed to connect to {port}: {e}")
-        return None
+# Set up serial connection
+ser = serial.Serial('COM10', 9600, timeout=1)  # Adjust COM port
+ser.flushInput()  # Clear the input buffer
 
-port = 'COM10'  
-baudrate = 9600
-ser = None
+# Define the path to the Data Logging folder
+data_folder = "Data Logging"
+csv_file_path = os.path.join(data_folder, "sensor_data.csv")
 
-while ser is None:
-    ser = initialize_serial(port, baudrate)
-    if ser is None:
-        print("Retrying in 5 seconds...")
-        time.sleep(5)
+# Create the Data Logging folder if it doesn't exist
+if not os.path.exists(data_folder):
+    os.makedirs(data_folder)
 
-with open('sensor_data.csv', 'a', newline='') as file:
+# Check if the CSV file exists
+file_exists = os.path.exists(csv_file_path)
+
+# Open the CSV file to save data
+with open(csv_file_path, 'a', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(["Timestamp", "Temperature", "Humidity", "Air Quality (PPM)", "AQI"])  
+    
+    # Write the header only if the file is being created for the first time
+    if not file_exists:
+        writer.writerow(["Timestamp", "Temperature", "Humidity", "Air Quality (PPM)", "AQI"])
 
     try:
         while True:
             if ser.in_waiting > 0:
                 line = ser.readline().decode('utf-8').strip()
-                data = line.split(',')
-                writer.writerow(data) 
-                print(f"Logged: {data}")
+                if line:  # Ensure the line is not empty
+                    data = line.split(',')
+                    if len(data) == 5:  # Ensure the data has 5 columns
+                        writer.writerow(data)  # Write data to CSV
+                        print(f"Logged: {data}")
     except KeyboardInterrupt:
         print("Logging stopped.")
     finally:
