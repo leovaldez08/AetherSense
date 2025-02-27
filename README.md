@@ -5,6 +5,7 @@ AetherSense is an IoT-based air quality monitoring system that measures temperat
 ---
 
 ## Features
+
 - **Real-Time Monitoring**: Measures temperature, humidity, and air quality (PPM and AQI).
 - **Data Logging**: Logs sensor data to a CSV file for analysis.
 - **Visualization**: Generates graphs to visualize trends in air quality metrics.
@@ -13,6 +14,7 @@ AetherSense is an IoT-based air quality monitoring system that measures temperat
 ---
 
 ## Hardware Requirements
+
 - Arduino Uno
 - DHT11 Sensor (Temperature and Humidity)
 - MQ135 Sensor (Air Quality)
@@ -24,6 +26,7 @@ AetherSense is an IoT-based air quality monitoring system that measures temperat
 ---
 
 ## Software Requirements
+
 - Arduino IDE
 - Python 3.x
 - Libraries:
@@ -36,13 +39,16 @@ AetherSense is an IoT-based air quality monitoring system that measures temperat
 ## Setup Instructions
 
 ### 1. Arduino Setup
+
 1. Connect the hardware components as per the circuit diagram.
 2. Upload the `AetherSense.ino` sketch to the Arduino Uno using the Arduino IDE.
 3. Open the Serial Monitor to verify that the Arduino is sending data.
 
 ### 2. Python Setup
+
 1. Install the required Python libraries:
+
    ```bash
    pip install pyserial pandas matplotlib
-Bam, rock and roll!
 
+Bam, rock and roll!
